@@ -1,0 +1,15 @@
+Tests\warnings.asm:3: error: duplicate label 'label' (first on line 2)
+Tests\warnings.asm:5: error: '08ge' is not a valid number or label
+Tests\warnings.asm:6: error: missing operand for 'ldc'
+Tests\warnings.asm:7: error: unexpected operand '5' for 'add'
+Tests\warnings.asm:8: error: extra text at end of line ('6')
+Tests\warnings.asm:8: error: '5,' is not a valid number or label
+Tests\warnings.asm:9: error: Invalid label name 0def
+Tests\warnings.asm:10: error: unknown mnemonic 'fibble'
+Tests\warnings.asm:11: error: unknown mnemonic '0def'
+Tests\warnings.asm:4: error: no such label 'nonesuch'
+Tests\warnings.asm:2: warning: label 'label' defined but never used
+ 10 errors, .o file not created
+
+--- labels ---
+label : 0

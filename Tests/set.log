@@ -1,0 +1,6 @@
+
+Tests\set.asm: 3-pc, 0 warnings,Tests\set.o and Tests\set.lst created
+
+--- labels ---
+val : 75
+val2 : 66

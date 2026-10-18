@@ -1,0 +1,5 @@
+Runtime Error at address 2 (instruction 3): division by zero (B=10, A=0)
+A=0 (0x00000000)  B=10 (0x0000000A)  PC=3  SP=65536
+
+Memory Dump
+00000000 00000A00 00000000 00000014 00000012

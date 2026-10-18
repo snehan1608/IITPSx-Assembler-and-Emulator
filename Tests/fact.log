@@ -1,0 +1,8 @@
+
+Tests\fact.asm: 24-pc, 0 warnings,Tests\fact.o and Tests\fact.lst created
+
+--- labels ---
+factloop : 6
+done : 17
+num : 22
+factres : 23

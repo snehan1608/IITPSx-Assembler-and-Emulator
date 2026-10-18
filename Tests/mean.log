@@ -1,0 +1,9 @@
+
+Tests\mean.asm: 37-pc, 0 warnings,Tests\mean.o and Tests\mean.lst created
+
+--- labels ---
+loop : 7
+calc : 23
+count : 30
+arr : 31
+result : 36

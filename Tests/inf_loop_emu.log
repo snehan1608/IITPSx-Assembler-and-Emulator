@@ -1,0 +1,6 @@
+Runtime Error at address 1 (instruction 100000): instruction limit (100000) exceeded-infinite loop
+A=5 (0x00000005)  B=6 (0x00000006)  PC=1  SP=65536
+
+Memory Dump
+00000000 00000500 00000101 FFFFFD11 FFFFFF11
+00000004 00000012

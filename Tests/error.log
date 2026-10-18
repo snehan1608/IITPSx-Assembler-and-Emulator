@@ -1,0 +1,19 @@
+Tests\error.asm:2: error: Invalid label name 1badlabel
+Tests\error.asm:6: error: missing operand for 'ldc'
+Tests\error.asm:8: error: unexpected operand '10' for 'add'
+Tests\error.asm:10: error: unknown mnemonic 'foo'
+Tests\error.asm:12: error: bad label name 'missing_label' used as operand
+Tests\error.asm:14: error: unknown mnemonic '//'
+Tests\error.asm:19: error: duplicate label 'dup' (first on line 16)
+Tests\error.asm:24: error: SET needs a label on the same line
+Tests\error.asm:26: error: SET needs a valid numeric value, got 'abc'
+Tests\error.asm:22: error: no such label 'hello'
+Tests\error.asm:5: warning: label 'start' defined but never used
+Tests\error.asm:16: warning: label 'dup' defined but never used
+Tests\error.asm:26: warning: label 'value' defined but never used
+ 10 errors, .o file not created
+
+--- labels ---
+start : 1
+dup : 6
+value : 0

@@ -1,0 +1,10 @@
+00000000 00000011 br nonesuch  ERR: Line 4: no such label 'nonesuch'
+00000001 00000000 ldc 08ge  ERR: Line 5: '08ge' is not a valid number or label
+00000002 00000000 ldc  ERR: Line 6: missing operand for 'ldc'
+00000003 00000506 add 5  ERR: Line 7: unexpected operand '5' for 'add'
+00000004 00000000 ldc 5, 6  ERR: Line 8: extra text at end of line ('6')
+00000005 00000000 fibble  ERR: Line 10: unknown mnemonic 'fibble'
+00000006 00000000 0def  ERR: Line 11: unknown mnemonic '0def'
+
+--- labels ---
+label : 0

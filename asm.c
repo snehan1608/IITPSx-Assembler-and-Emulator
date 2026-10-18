@@ -34,7 +34,7 @@ typedef enum
     set
 } Kind; /*Tells what are the type commands*/
 typedef struct
-{ /*[24,8] */
+{ /*[24,8] [operand/value/immediate,opcode]*/
     char *name;
     int opcode;
     Format format; /* branch: label operand is pc-relative*/

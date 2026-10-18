@@ -1,0 +1,6 @@
+Tests\inf_loop.asm:6: warning: possible infinite loop (backward jump to itself)
+
+Tests\inf_loop.asm: 5-pc, 1 warnings,Tests\inf_loop.o and Tests\inf_loop.lst created
+
+--- labels ---
+start : 0

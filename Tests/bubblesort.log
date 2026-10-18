@@ -1,0 +1,11 @@
+
+Tests\bubblesort.asm: 53-pc, 0 warnings,Tests\bubblesort.o and Tests\bubblesort.lst created
+
+--- labels ---
+outer : 5
+inner : 10
+noswap : 36
+nextpass : 40
+done : 44
+count : 46
+arr : 47
