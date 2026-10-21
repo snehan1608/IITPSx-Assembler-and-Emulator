@@ -3,12 +3,14 @@ Roll Number: 2501CS03
 Project: IITPSx Assembler and Emulator
 
 Claims:
-
 I have implemented and tested all required features for both the assembler and emulator using strict C99 standards without warnings.
 
 Run this in terminal for making asm.exe and emu.exe files-
 gcc -std=c99 -pedantic -Wall asm.c -o asm
 gcc -std=c99 -pedantic -Wall emu.c -o emu
+
+./asm relpath.asm
+./emu relpath.o (if .o file is created)
 
 Assembler (asm.c):
 - Implements two-pass assembly, resolves forward label references, and computes PC-relative branch offsets.
@@ -18,10 +20,12 @@ Assembler (asm.c):
 
 Emulator (emu.c):
 - Loads 32-bit little-endian .o files into simulated memory.
-- Initializes regSP to MEM_WORDS (65536) following an empty descending stack model, requiring an initial `adj` allocation before local stack writes.
+- Initializes regSP to MEM_WORDS (65536) following an empty descending stack model, requiring an initial `adj`
+  allocation before local stack writes.
 - Accurately executes all arithmetic instructions (including mul and div).
 - Explicitly intercepts division by zero and division overflow, logging runtime errors and halting safely.
-- Detects illegal opcodes, out-of-bounds PC/memory access (including unadjusted stack access at address 65536), and infinite loops, producing a memory dump upon completion.
+- Detects illegal opcodes, out-of-bounds PC/memory access (including unadjusted stack access at address 65536),
+  and infinite loops, producing a memory dump upon completion.
 
 Known Bugs:
 - None. Tested with Bubble Sort, Mean, Factorial, and error edge cases.

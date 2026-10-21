@@ -26,7 +26,7 @@ typedef enum
     none,
     value,
     branch
-} Format; /*tells what an operand is*/
+} Format; /*tells what an operand is(type of operand)*/
 typedef enum
 {
     instruction,
@@ -68,13 +68,13 @@ Instruction instruction_table[] = {
 typedef struct
 {
     char name[MAX_LABEL_LEN + 1];
-    long value; /* address or the adress given to SET */
+    long value; /* address or the number given to SET */
     int is_set;
     int used;
     int line;
 } Label;
 
-Label labels[MAX_LABELS];
+Label labels[MAX_LABELS];//For symbol table
 int label_count = 0;
 Word code[MAX_CODE_WORDS]; /* assembled program */
 long pc = 0;               /* current address */
@@ -92,7 +92,7 @@ int list_label_warnings = 0;
 /* label names used as operands (filled in pass 1) */
 char referenced[MAX_LABELS][MAX_LABEL_LEN + 1];
 int referenced_count = 0;
-/* Writes "file:line:type: message" to the log and counts errors/warnings.
+/* Writes file:line:type:message to the log and counts errors/warnings.
    Only the pass given is logged; the other pass just saves the text for the listing line. */
 void report(int pass, char *type, char *format, ...)
 {
@@ -120,7 +120,7 @@ void report(int pass, char *type, char *format, ...)
     { /* keep the text in string for the listing */
         if (is_error && inline_error[0] == '\0')
         {
-            sprintf(inline_error, "ERR: Line %d: %s", line_no, message);
+            sprintf(inline_error, "ERROR: Line %d: %s", line_no, message);
         }
         else if (!is_error && pass == 2 && inline_warning[0] == '\0')
         {
@@ -186,7 +186,7 @@ int find_label(char *name)
     }
     return -1;
 }
-/* pass 1: remember that a label name is used as an operand. */
+/* pass 1: remember that a label name is used as an operand,used later to find unused labels */
 void note_reference(char *name)
 {
     for (int i = 0; i < referenced_count; i++)
@@ -201,7 +201,7 @@ void note_reference(char *name)
         strcpy(referenced[referenced_count++], name);
     }
 }
-/* Between the passes: set used for every label that is referenced. */
+/* called between the passes: set used for every label that is referenced. */
 void mark_used_labels(void)
 {
     for (int i = 0; i < label_count; i++)
@@ -244,11 +244,12 @@ void place_label(char *name, int valid, long label_value, int is_set)
         return;
     }
     else
-    { /* In pass 2= check for duplicate and unused label  warning*/
+    { /* In pass 2= re check for duplicate(then error shown in .lst) and unused label  warning*/
         if (existing >= 0 && labels[existing].line != line_no)
         {
             report(1, "error", "duplicate label '%s' (first on line %d)", name, labels[existing].line);
         }
+
         if (list_label_warnings && !is_set && existing >= 0 && labels[existing].line == line_no && !labels[existing].used)
         {
             sprintf(warning, "WARN: Label '%s' defined but never used", name);
@@ -293,12 +294,13 @@ int in_range(long number, int is_data)
         return number >= -2147483647L - 1 && (number <= 0x7FFFFFFFL || (unsigned long)number <= MASK32);
     return number >= OPERAND_MIN && number <= OPERAND_MAX;
 }
-/*find the operand value,(pc-relative for branch),return 1 on success else 0 */
+/*find the operand string to int,(pc-relative for branch),return 1 on success else 0 */
 int evaluate_operand(char *token, int is_branch, int is_data, long *number, int *label_index)
 {
     int index;
     *number = 0;
     *label_index = -1;
+    //If it starts with letter then its a label else a number
     if (isalpha((unsigned char)token[0]))
     {
         if (!valid_label_name(token))
@@ -322,22 +324,26 @@ int evaluate_operand(char *token, int is_branch, int is_data, long *number, int 
         *number = labels[index].value;
         if (is_branch)
         {
-            *number -= pc + 1; /* pc is already incremented */
+            *number -= (pc + 1); /* pc is incremented before executing */
         }
+
         return 1;
     }
+    //Checking things for a number
     if (!str_to_long(token, number))
     {
         *number = 0;
         report(1, "error", "'%s' is not a valid number or label", token);
         return 0;
     }
+
     if (!in_range(*number, is_data))
     {
         report(1, "error", "operand '%s' is out of range", token);
         *number = 0;
         return 0;
     }
+
     return 1;
 }
 /* Copy the word into the out array without taking the initial spaces in it by using cursor*/
@@ -354,7 +360,7 @@ char *read_token(char *cursor, char *out)
     *out = '\0';
     return cursor;
 }
-/* Every line: address|machine code|statement exactly as written for that line. */
+/* Every line: address|machine code|code exactly as written in that line. */
 void write_listing(long address, Word word, char *text)
 {
     if (list_fp == NULL)
@@ -385,11 +391,13 @@ void emit_word(Word word, char *text)
         report(1, "error", "program too large (limit %d words)", MAX_CODE_WORDS);
         return;
     }
+
     if (current_pass == 2)
     {
         code[pc] = word;
         write_listing(pc, word, text);
     }
+
     pc++;
 }
 /*Process one line*/
@@ -447,7 +455,7 @@ void process_line(char *text)
         cursor = start; /* no label: rescan as mnemonic(means things like add,set etc) */
     }
 
-    cursor = read_token(cursor, mnemonic);
+    cursor = read_token(cursor, mnemonic);//reads mnemonic into mnemonic array
     if (mnemonic[0] == '\0')
     { /* label on its own */
         place_label(label_name, label_valid, pc, 0);
@@ -469,22 +477,23 @@ void process_line(char *text)
 
     entry = find_instruction(mnemonic);
     if (entry == NULL)
-    {
+    {//unknown mnemonic
         report(1, "error", "unknown mnemonic '%s'", mnemonic);
         if (has_label)
         {
             place_label(label_name, label_valid, pc, 0);
         }
-        emit_word(0, statement_text); /* this is error so listed */
+        emit_word(0, statement_text); /*word is emmitted anyway because later address dont /shouldnt shift */
         return;
     }
+
     if (has_label && entry->kind != set)
     {
         place_label(label_name, label_valid, pc, 0);
     }
 
-    cursor = read_token(cursor, operand_text);
-    cursor = read_token(cursor, extra_text);
+    cursor = read_token(cursor, operand_text);//read operand
+    cursor = read_token(cursor, extra_text);//if not empty it is error
     if (extra_text[0] != '\0')
     {
         report(1, "error", "extra text at end of line ('%s')", extra_text);
@@ -510,12 +519,12 @@ void process_line(char *text)
     {
         if (!str_to_long(operand_text, &number) || !in_range(number, 1))
         {
-            report(1, "error", "SET needs a valid numeric value, got '%s'", operand_text);
+            report(1, "error", "SET needs a valid numeric value, given '%s'", operand_text);
             number = 0;
         }
     }
     else
-    {
+    {//computes the number
         operand_ok = evaluate_operand(operand_text, entry->format == branch, entry->kind == data, &number, &label_index);
     }
 
@@ -542,6 +551,7 @@ void process_line(char *text)
         {
             word = ((((Word)number) & MASK24) << 8) | (Word)entry->opcode;
         }
+
         if (entry->kind == instruction && entry->opcode == 17 && number == -1)
         {
             report(2, "warning", "possible infinite loop (backward jump to itself)");
@@ -644,12 +654,13 @@ int main(int argc, char *argv[])
     strcat(lst_name, ".lst");
     strcpy(log_name, base);
     strcat(log_name, ".log");
-    log_fp = fopen(log_name, "w"); /* open before pass 1 so it writes every error */
+    log_fp = fopen(log_name, "w"); /* opened before pass 1 so it writes every error */
     if (log_fp == NULL)
     {
         fprintf(stderr, "cannot create %s\n", log_name);
         return 2;
     }
+
     run_pass(src, 1);
     mark_used_labels();
 
@@ -662,9 +673,11 @@ int main(int argc, char *argv[])
     }
 
     run_pass(src, 2);
+
     write_symbol_table(list_fp);
     fclose(list_fp);
     list_fp = NULL;
+
     for (int i = 0; i < label_count; i++)
     {
         if (!labels[i].used)
@@ -673,6 +686,7 @@ int main(int argc, char *argv[])
             report(2, "warning", "label '%s' defined but never used", labels[i].name);
         }
     }
+    
     fclose(src);
     if (error_count > 0)
     { /*If there are any errors the .o file isnt made else .o file is made*/

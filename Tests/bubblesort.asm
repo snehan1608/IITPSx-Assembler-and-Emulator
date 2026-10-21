@@ -1,5 +1,5 @@
 ; Bubble Sort
-; Locals: [0]=pass, [1]=j, [2]=&arr[j], [3]=arr[j], [4]=arr[j+1]
+; Locals: [0]=pass, [1]=j, [2]=&arr[j](adress of element), [3]=arr[j], [4]=arr[j+1]
 
             adj         -5          ; reserve 5 locals using default SP
             ldc         count
@@ -10,14 +10,13 @@
 outer:      ldl         0
             brz         done        ; if pass == 0, sorting finished
             brlz        done
-
             ldc         0
             stl         1           ; j = 0
 
 inner:      ldl         0
             ldl         1
             sub                     ; pass - j
-            brz         nextpass    ; if j == pass, go to next pass
+            brz         nextpass    ; if pass-j <=0, go to next pass
             brlz        nextpass
 
             ldc         arr
@@ -57,7 +56,7 @@ nextpass:   ldl         0
             stl         0           ; pass--
             br          outer
 
-done:       adj         5           ; free locals
+done:       adj         5           ; free
             HALT
 
 count:      data        6
@@ -67,3 +66,16 @@ arr:        data        42
             data        99
             data        23
             data        4           ; Expected: -8, 4, 15, 23, 42, 99
+
+
+;int count = 6;
+;int arr[6] = {42, 15, -8, 99, 23, 4};
+;int pass = count - 1;                  // local 0
+;while (pass > 0) {
+;    int j = 0;                         // local 1
+;    while (j < pass) {
+;        if (arr[j] > arr[j+1]) swap(arr[j], arr[j+1]);
+;        j++;
+;    }
+;    pass--;
+;}
