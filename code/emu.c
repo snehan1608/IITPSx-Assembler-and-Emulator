@@ -59,7 +59,7 @@ void dump_memory(long count)
     {
         if (i % 4 == 0)
         {
-            fprintf(log_fp, "%s%08lX", i == 0 ? "" : "\n",(unsigned long) i);
+            fprintf(log_fp, "%s%08lX", i == 0 ? "" : "\n", (unsigned long)i);
         }
         fprintf(log_fp, " %08X", (Word)memory[i]);
     }
@@ -85,16 +85,16 @@ int add32(int x, int y)
 {
     return (int)((Word)x + (Word)y);
 }
-int sign_ext_explicit(Word value)
+int sign_ext(Word value)
 { /* Keep only the lower 24 bits */
     Word val24 = value & 0x00FFFFFF;
     /* Checks if bit 23 (sign bit) is 1 */
     if (val24 & 0x00800000)
-    {/* Negative: fill top 8 bits (bits 24..31) with 1s */
+    { /* Negative: fill top 8 bits (bits 24..31) with 1s */
         return (int)(val24 | 0xFF000000);
     }
     else
-    {/* Positive: top bits are already 0 */
+    { /* Positive: top bits are already 0 */
         return (int)val24;
     }
 }
@@ -112,7 +112,7 @@ int run(unsigned long maxSteps)
         }
         if (stepCount >= maxSteps)
         {
-            return fail("instruction limit (%lu) exceeded-""infinite loop",maxSteps);
+            return fail("instruction limit (%lu) exceeded-""infinite loop", maxSteps);
         }
         instruction = (Word)memory[regPC];
         regPC++; /* PC moves on before the action */
@@ -181,7 +181,7 @@ int run(unsigned long maxSteps)
             {
                 return fail("shr by invalid count %d", regA);
             }
-            regA =  (regB >> regA) ;
+            regA = (regB >> regA);
             break;
         case 10: /* adj */
             regSP = add32(regSP, operand);
