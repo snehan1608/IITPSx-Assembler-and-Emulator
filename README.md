@@ -1,6 +1,6 @@
 # IITPSx Assembler & Emulator
 
-A two-pass assembler (`code/asm.c`) and a stack-machine emulator (`code/emu.c`) for **IITPSx**, a 32-bit accumulator-stack architecture. Both tools are written in portable ISO C99 with no dependencies, and were built as the CS2102 mini project at IIT Patna.
+A two-pass assembler (`code/asm.c`) and a stack-machine emulator (`code/emu.c`) for **IITPSx**, a 32-bit accumulator-stack architecture. Both tools are written in portable ISO C99 with no dependencies.
 
 ```
   prog.asm ──► asm ──► prog.o  ──► emu ──► prog_emu.log
