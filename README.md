@@ -173,8 +173,4 @@ IITPSx-Assembler-and-Emulator
 
 - Memory is word-addressed only; there are no byte operations.
 - No macros, expressions in operands (`label+4`), or multi-file linking.
-- `emu` runs non-interactively and only reports state at the end (no single-step or tracing mode).
 
-## Author
-
-**Snehan Choudavarapu** (2501CS03), B.Tech CSE, IIT Patna
