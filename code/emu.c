@@ -267,7 +267,6 @@ int main(int argc, char *argv[])
     loadedWords = load_file(file_name); // load the .o binary file into memory array before running
     if (loadedWords < 0)
     {
-        fclose(log_fp);
         return 2;
     }
     make_log_name(file_name, log_name); // making log file name

@@ -6,8 +6,8 @@ Claims:
 I have implemented and tested all required features for both the assembler and emulator using strict C99 standards without warnings.
 
 Run this in terminal for making asm.exe and emu.exe files-
-gcc -std=c99 -pedantic -Wall asm.c -o asm
-gcc -std=c99 -pedantic -Wall emu.c -o emu
+gcc -std=c99 -pedantic -Wall code/asm.c -o asm
+gcc -std=c99 -pedantic -Wall code/emu.c -o emu
 
 ./asm relpath.asm
 ./emu relpath.o (if .o file is created)
@@ -29,3 +29,8 @@ Emulator (emu.c):
 
 Known Bugs:
 - None. Tested with Bubble Sort, Mean, Factorial, and error edge cases.
+
+EXTRA
+app.py: a Tkinter GUI to edit, assemble and run programs and to view the
+        log, listing and emulator output. It only runs the compiled asm and emu
+        programs and does not change them.

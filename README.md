@@ -9,6 +9,18 @@ A two-pass assembler (`code/asm.c`) and a stack-machine emulator (`code/emu.c`) 
                  └──► prog.log
 ```
 
+## GUI 
+
+`app.py` is a small Tkinter window with an editor on the left and three tabs on the right: **Log**, **Listing** and **Emulator output**.
+
+```bash
+python app.py
+```
+
+- Needs Python 3 with Tkinter, and `asm` and `emu` (`.exe` on Windows) in the same folder as `app.py`.
+- **Assemble & Run** saves the editor text as `prog.asm` in a temporary folder, runs `asm`, and, only if `prog.o` was created, runs `emu`. The temporary folder is deleted afterwards, so no generated files are left in the project.
+- **Open .asm** starts in `Tests/`. The GUI only runs the compiled tools, so the command-line workflow is unchanged.
+
 ## Features
 
 **Assembler**
@@ -76,6 +88,8 @@ Here the array at `0x2F` has been sorted in place: `-8, 4, 15, 23, 42, 99`.
 
 **Instruction encoding:** `[ operand : 24 bits | opcode : 8 bits ]`. The operand is signed, from `-8,388,608` to `16,777,215`. `data` words use the full 32 bits.
 
+**Branches do not pop:** `brz` and `brlz` only test `A`. They leave `A` and `B` unchanged, whether or not the branch is taken.
+
 ## Instruction set
 
 | Mnemonic | Opcode | Operand | Semantics |
@@ -132,9 +146,26 @@ result:     data  0
 ```
 
 - **Labels:** start with a letter, letters and digits only (no underscores), at most 31 characters, end with `:`.
+- **Case:** mnemonics are case-insensitive (`LDC` is the same as `ldc`), but label names are case-sensitive.
+- **Numbers:** decimal (`25`, `-5`, `+5`), octal (`077`) or hexadecimal (`0x1F`).
 - **Comments:** everything after `;`.
 - **Terminate with `HALT`** and put `data` words *after* it, otherwise the CPU executes data as instructions.
 - Running the example above leaves `6` in the last word of the memory dump (`result`).
+
+## Diagnostics
+
+Messages go to the `.log` file as `file:line: error: message` or `file:line: warning: message`, and the failing line is also marked `ERR:` in the `.lst`. Errors found in pass 2 (such as undefined labels) are listed after those found in pass 1. Excerpt for a file with several mistakes:
+
+```
+error.asm:2: error: duplicate label 'label' (first on line 1)
+error.asm:4: error: '08ge' is not a valid number or label
+error.asm:5: error: missing operand for 'ldc'
+error.asm:6: error: unexpected operand '5' for 'add'
+error.asm:9: error: unknown mnemonic 'fibble'
+error.asm:3: error: no such label 'nonesuch'
+error.asm:1: warning: label 'label' defined but never used
+ 10 errors, .o file not created
+```
 
 ## Tests
 
@@ -163,6 +194,7 @@ To regenerate a test:
 IITPSx-Assembler-and-Emulator
 ├── code/          asm.c (two-pass assembler), emu.c (emulator)
 ├── Tests/         test programs and their generated .o, .lst, .log, _emu.log
+├── app.py         optional Tkinter GUI
 ├── asm.exe        prebuilt assembler (Windows)
 ├── emu.exe        prebuilt emulator (Windows)
 ├── claims.txt     submission summary
@@ -173,4 +205,3 @@ IITPSx-Assembler-and-Emulator
 
 - Memory is word-addressed only; there are no byte operations.
 - No macros, expressions in operands (`label+4`), or multi-file linking.
-
