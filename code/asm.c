@@ -668,7 +668,6 @@ int main(int argc, char *argv[])
     if (list_fp == NULL)
     {
         fprintf(log_fp, "cannot create %s\n", lst_name);
-        fclose(log_fp);
         return 2;
     }
 
